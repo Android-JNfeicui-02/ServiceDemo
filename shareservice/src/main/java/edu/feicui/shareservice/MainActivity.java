@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     PutService.MyBinder mBinder;
 
+    PutService mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +78,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_sync:
                 if (mBinder != null) {
+                    System.out.println("当前输入框里的内容是： " + mEditText.getText().toString()
+                            + "并传递给了Binder对象");
                     mBinder.setData(mEditText.getText().toString());
+                    System.out.println("Binder里面的data的值是 " + mBinder.getData());
                 }
                 break;
 
@@ -92,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
+            System.out.println("handler里面传来的Message的值是" + msg.getData().getString("data"));
             mTextView.setText(msg.getData().getString("data"));
 
         }
@@ -106,10 +111,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
+
         mBinder = (PutService.MyBinder) service;
-        mBinder.getService().setCallback(new PutService.Callback() {
+        mService = mBinder.getService();
+        mService.setCallback(new PutService.Callback() {
             @Override
             public void onDataChanged(String data) {
+                System.out.println("onDataChanged 接收到的值是 ： " + data);
                 // 把数据传递过来 必须要使用Handler来通信
                 // 需要message对象 来帮助我们 传递内容
                 Message message = new Message();
@@ -120,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 message.setData(bundle);
                 // 调用handler的send 方法 把 message对象发送给 handler的 handleMessage方法
                 handler.sendMessage(message);
+
             }
         });
     }

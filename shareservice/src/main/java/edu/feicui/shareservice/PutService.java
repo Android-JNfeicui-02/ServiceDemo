@@ -35,6 +35,10 @@ public class PutService extends Service {
         public PutService getService() {
             return PutService.this;
         }
+
+        public String getData() {
+            return PutService.this.mData;
+        }
     }
 
 
@@ -82,6 +86,10 @@ public class PutService extends Service {
 
     private Callback mCallback = null;
 
+    /**
+     * 目的是 实例化对象
+     * @param callback
+     */
     public void setCallback(Callback callback) {
         mCallback = callback;
     }
